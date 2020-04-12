@@ -1,5 +1,5 @@
-from game import Game
-from board import Board
+from mancala.game import Game
+from mancala.board import Board
 
 
 def run():

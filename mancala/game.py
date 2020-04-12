@@ -1,4 +1,4 @@
-from board import Board
+from mancala.board import Board
 from random import randint
 
 
