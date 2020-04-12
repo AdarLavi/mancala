@@ -13,6 +13,7 @@ def run():
 
     while not Board.all_pits_empty(game.board):
         move = int(input("pit number to start the move from: "))
+        game.validate_move(move)
         game.make_move(move)
         Board.print_board(game.board, player_1, player_2)
         print(game.turn + " your turn")

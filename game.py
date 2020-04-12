@@ -9,6 +9,13 @@ class Game:
         self.player_1 = None  # pits 0-5, store 1
         self.player_2 = None  # pits 6-11, store 2
 
+    def validate_move(self, pit_so_start):
+        if pit_so_start not in range(12):
+            raise ValueError("bad value")
+        if self.board.get_pit_stones(pit_so_start) == 0:
+            raise ValueError("impossible move")
+        pass
+
     def make_move(self, pit_to_start):
         stones_in_pit = Board.remove_from_pit(self.board, pit_to_start)
         current_turn = self.turn
@@ -24,16 +31,16 @@ class Game:
         #     for steps, stone in enumerate(stones_in_pit):
         #         Board.add_to_pit(self.board, pit_to_start + steps + 1)
         #     Board.add_to_store(self.board, current_player_store)
-
-        current_pit = (pit_to_start + 1) % 12
+        current_pit = pit_to_start
 
         stones = stones_in_pit
         while stones > 0:
+            current_pit = (current_pit + 1) % 12
             if current_pit == 6 and current_turn == self.player_1:
                 Board.add_to_store(self.board, 1)
                 stones -= 1
 
-            if current_pit == 11 and current_turn == self.player_2:
+            if current_pit == 0 and current_turn == self.player_2:
                 Board.add_to_store(self.board, 2)
                 stones -= 1
 
@@ -43,7 +50,6 @@ class Game:
 
             Board.add_to_pit(self.board, current_pit)
             stones -= 1
-            current_pit = (current_pit + 1) % 12
 
         pit_in_front_current = None
         if current_pit <= 5 and Board.get_pit_stones(self.board, current_pit) == 1 and current_turn == self.player_1:
