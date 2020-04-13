@@ -16,7 +16,15 @@ def run():
         game.validate_move(move)
         game.make_move(move)
         Board.print_board(game.board, player_1, player_2)
-        print(game.turn + " your turn")
+        print(game.turn + ", it\'s your turn")
+
+    winner = str(game.end_game()).upper()
+    print(winner + " WON")
+
+    return
+
+
+
 
 
 if __name__ == "__main__":

@@ -54,14 +54,16 @@ class Game:
         pit_in_front_current = None
         if current_pit <= 5 and Board.get_pit_stones(self.board, current_pit) == 1 and current_turn == self.player_1:
             pit_in_front_current = self.board.pits_pairs.get(current_pit)
-            self.take_from_in_front_pit(current_pit, pit_in_front_current, 1)
+            if Board.get_pit_stones(self.board, pit_in_front_current) > 0:
+                self.take_from_in_front_pit(current_pit, pit_in_front_current, 1)
 
         if current_pit >= 6 and Board.get_pit_stones(self.board, current_pit) == 1 and current_turn == self.player_2:
             for key, val in self.board.pits_pairs.items():
                 if val == current_pit:
                     pit_in_front_current = key
                     break
-            self.take_from_in_front_pit(current_pit, pit_in_front_current, 2)
+            if Board.get_pit_stones(self.board, pit_in_front_current) > 0:
+                self.take_from_in_front_pit(current_pit, pit_in_front_current, 2)
 
     def take_from_in_front_pit(self, current_pit, pit_in_front_current, current_store):
         stones_in_front_of_current = Board.remove_from_pit(self.board, pit_in_front_current)
@@ -75,3 +77,8 @@ class Game:
         first_turn = randint(1, 3)
 
         self.turn = self.player_2 if first_turn == 2 else self.player_1
+
+    def end_game(self):
+        winner = self.player_1 if self.board.get_store_stones(1) >\
+                                  self.board.get_store_stones(2) else self.player_2
+        return winner
