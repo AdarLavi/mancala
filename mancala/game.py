@@ -1,4 +1,5 @@
 from mancala.board import Board
+from mancala.exceptions import InvalidInput, EmptyPit
 from random import randint
 
 
@@ -10,13 +11,18 @@ class Game:
         self.player_2 = None  # pits 6-11, store 2
 
     def validate_move(self, pit_so_start):
+        try:
+            pit_so_start = int(pit_so_start)
+        except ValueError:
+            raise InvalidInput
         if pit_so_start not in range(12):
-            raise ValueError("bad value")
+            raise InvalidInput
         if self.board.get_pit_stones(pit_so_start) == 0:
-            raise ValueError("impossible move")
-        pass
+            raise EmptyPit
+        return pit_so_start
 
     def make_move(self, pit_to_start):
+        pit_to_start = self.validate_move(pit_to_start)
         stones_in_pit = Board.remove_from_pit(self.board, pit_to_start)
         current_turn = self.turn
         self.turn = self.player_1 if current_turn != self.player_1 else self.player_2

@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class Board:
     def __init__(self):
         self.pits = [4] * 12
@@ -10,15 +11,6 @@ class Board:
                            3: 8,
                            4: 7,
                            5: 6}
-
-    # def create_pits(self):
-    #     self.pits =
-
-    # def create_stores(self):
-    #     self.stores =
-
-    # def create_pits_pairs(self):
-    #     self.pits_pairs =
 
     def get_store_stones(self, store_num):
         return self.stores[store_num - 1]
@@ -61,9 +53,3 @@ class Board:
         df = df.rename(columns={0: 'store', 7: 'store'})
         df = df.rename(columns=columns_names)
         print(df)
-
-
-
-
-
-
