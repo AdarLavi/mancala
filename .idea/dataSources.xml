@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="" uuid="fef37597-f1c7-4bf6-a9f0-a400d41acdb5">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\Adar.Lavi\Documents\InterviewsPrep\mancala\.coverage</jdbc-url>
+    </data-source>
+  </component>
+</project>

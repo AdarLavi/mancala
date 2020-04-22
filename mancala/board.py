@@ -1,7 +1,24 @@
 import pandas as pd
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+# from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, ARRAY, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+from mancala.base import Base
+
+# Base = Base
 
 
-class Board:
+class Board(Base):
+    __tablename__ = "boards"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    pits = Column(ARRAY(Integer))
+    stores = Column(ARRAY(Integer))
+    game_id = Column(UUID(as_uuid=True), ForeignKey('games.id'))
+
+    game = relationship("Game", back_populates="board")
+
     def __init__(self):
         self.pits = [4] * 12
         self.stores = [0] * 2

@@ -1,14 +1,30 @@
 from mancala.board import Board
 from mancala.exceptions import InvalidInput, EmptyPit
 from random import randint
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.orm import relationship
+import uuid
+from mancala.base import Base
+# from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects.postgresql import UUID
+
+# Base = Base()
 
 
-class Game:
-    def __init__(self):
+class Game(Base):
+    __tablename__ = 'games'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    player_1 = Column(String)
+    player_2 = Column(String)
+    turn = Column(String)
+
+    board = relationship("Board", uselist=False, back_populates="game")
+
+    def __init__(self, player_1, player_2):
         self.board = Board()
-        self.turn = None
-        self.player_1 = None  # pits 0-5, store 1
-        self.player_2 = None  # pits 6-11, store 2
+        self.player_1 = player_1  # pits 0-5, store 1
+        self.player_2 = player_2  # pits 6-11, store 2
 
     def validate_move(self, pit_so_start):
         try:
@@ -77,9 +93,7 @@ class Game:
         for i in range(stones_in_front_of_current + 1):
             Board.add_to_store(self.board, current_store)
 
-    def start_game(self, first_player_name, second_player_name):
-        self.player_1 = first_player_name
-        self.player_2 = second_player_name
+    def start_game(self):
         first_turn = randint(1, 3)
 
         self.turn = self.player_2 if first_turn == 2 else self.player_1

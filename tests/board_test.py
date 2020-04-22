@@ -1,5 +1,6 @@
 from mancala.board import Board
 import pytest
+import pandas as pd
 
 
 @pytest.fixture
@@ -50,3 +51,21 @@ def test_add_to_pit(board):
 def test_add_to_store(board):
     board.add_to_store(2)
     assert board.stores[1] == 1
+
+
+# def test_print_borad(board):
+#     in_pit = board.remove_from_pit(2)
+#     for i in range(1, in_pit):
+#         board.add_to_pit(2+i)
+#     board.add_to_store(1)
+#     first_player_pits_and_store = [' '] + [4, 0] + [5]*3 + [1]
+#
+#     second_player_store_and_pits = [0] + [4]*6 + [' ']
+#
+#     columns_names = {x: 'pit' for x in range(1, 7)}
+#     df = pd.DataFrame({"second": second_player_store_and_pits, "first": first_player_pits_and_store})
+#     df = df.transpose()
+#     df = df.rename(columns={0: 'store', 7: 'store'})
+#     df = df.rename(columns=columns_names)
+#
+#     assert Board.print_board(board, "first", "second") ==

@@ -1,13 +1,24 @@
-from mancala.game import Game
+from mancala.game import Game, Base
 from mancala.board import Board
 from mancala.exceptions import InvalidInput, EmptyPit
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 def run():
-    game = Game()
+    engine = create_engine("postgresql://postgres:65266526@localhost/mancala")
+    Base.metadata.create_all(engine)
     player_1 = input("First player, enter your name: ")
     player_2 = input("Second player, enter your name: ")
-    game.start_game(player_1, player_2)
+    game = Game(player_1=player_1, player_2=player_2)
+    game.start_game()
+
+    Session = sessionmaker(engine, expire_on_commit=False)
+    session = Session()
+    session.add(game)
+    session.add(game.board)
+    session.commit()
+    # get_started(engine, game)
 
     Board.print_board(game.board, player_1, player_2)
     print(game.turn + ", the first move is yours")
@@ -19,6 +30,9 @@ def run():
             try:
                 game.make_move(move)
                 Board.print_board(game.board, player_1, player_2)
+                session.add(game)
+                session.add(game.board)
+                session.commit()
                 break
             except EmptyPit:
                 print("Choose a non empty pit, genius")
@@ -29,6 +43,17 @@ def run():
     print(winner + " WON")
 
     return
+
+
+def get_started(engine, game):
+
+    Session = sessionmaker(engine)
+    session = Session()
+
+    session.add(game)
+    session.commit()
+
+    pass
 
 
 if __name__ == "__main__":
