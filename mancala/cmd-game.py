@@ -16,9 +16,7 @@ def run():
     Session = sessionmaker(engine, expire_on_commit=False)
     session = Session()
     session.add(game)
-    session.add(game.board)
     session.commit()
-    # get_started(engine, game)
 
     Board.print_board(game.board, player_1, player_2)
     print(game.turn + ", the first move is yours")
@@ -30,8 +28,8 @@ def run():
             try:
                 game.make_move(move)
                 Board.print_board(game.board, player_1, player_2)
-                session.add(game)
-                session.add(game.board)
+                # board = game.board
+                # session.add_all([game, board])
                 session.commit()
                 break
             except EmptyPit:

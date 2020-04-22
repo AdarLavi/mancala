@@ -4,6 +4,8 @@ from sqlalchemy.dialects.postgresql import UUID
 # from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, ARRAY, Integer, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm.attributes import flag_dirty, flag_modified
+
 from mancala.base import Base
 
 # Base = Base
@@ -44,13 +46,16 @@ class Board(Base):
     def remove_from_pit(self, pit_num):
         in_pit = self.pits[pit_num]
         self.pits[pit_num] = 0
+        flag_modified(self, 'pits')
         return in_pit
 
     def add_to_pit(self, pit_num):
         self.pits[pit_num] += 1
+        flag_modified(self, 'pits')
 
     def add_to_store(self, player_store):
         self.stores[player_store-1] += 1
+        flag_modified(self, 'stores')
 
     @staticmethod
     def print_board(board, player_1, player_2):
