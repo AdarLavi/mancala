@@ -5,8 +5,8 @@ import pytest
 
 @pytest.fixture
 def game():
-    game = Game()
-    game.start_game("first", "second")
+    game = Game("first", "second")
+    game.start_game()
     game.turn = "first"
     return game
 

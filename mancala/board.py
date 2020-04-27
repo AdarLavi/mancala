@@ -1,14 +1,14 @@
-import pandas as pd
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
-# from sqlalchemy.ext.declarative import declarative_base
+
+import pandas as pd
 from sqlalchemy import Column, ARRAY, Integer, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm.attributes import flag_dirty, flag_modified
+from sqlalchemy.orm.attributes import flag_modified
 
 from mancala.base import Base
 
-# Base = Base
+pits_pairs = {0: 11, 1: 10, 2: 9, 3: 8, 4: 7, 5: 6}
 
 
 class Board(Base):
@@ -24,12 +24,12 @@ class Board(Base):
     def __init__(self):
         self.pits = [4] * 12
         self.stores = [0] * 2
-        self.pits_pairs = {0: 11,
-                           1: 10,
-                           2: 9,
-                           3: 8,
-                           4: 7,
-                           5: 6}
+        # self.pits_pairs = {0: 11,
+        #                    1: 10,
+        #                    2: 9,
+        #                    3: 8,
+        #                    4: 7,
+        #                    5: 6}
 
     def get_store_stones(self, store_num):
         return self.stores[store_num - 1]

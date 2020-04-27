@@ -1,14 +1,14 @@
-from mancala.board import Board
-from mancala.exceptions import InvalidInput, EmptyPit
-from random import randint
-from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
 import uuid
-from mancala.base import Base
+from random import randint
+
+from sqlalchemy import Column, String
 # from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
-# Base = Base()
+from mancala.base import Base
+from mancala.board import Board, pits_pairs
+from mancala.exceptions import InvalidInput, EmptyPit
 
 
 class Game(Base):
@@ -75,12 +75,12 @@ class Game(Base):
 
         pit_in_front_current = None
         if current_pit <= 5 and self.board.get_pit_stones(current_pit) == 1 and current_turn == self.player_1:
-            pit_in_front_current = self.board.pits_pairs.get(current_pit)
+            pit_in_front_current = pits_pairs.get(current_pit)
             if self.board.get_pit_stones(pit_in_front_current) > 0:
                 self.take_from_in_front_pit(current_pit, pit_in_front_current, 1)
 
         if current_pit >= 6 and self.board.get_pit_stones(current_pit) == 1 and current_turn == self.player_2:
-            for key, val in self.board.pits_pairs.items():
+            for key, val in pits_pairs.items():
                 if val == current_pit:
                     pit_in_front_current = key
                     break
@@ -102,3 +102,4 @@ class Game(Base):
         winner = self.player_1 if self.board.get_store_stones(1) >\
                                   self.board.get_store_stones(2) else self.player_2
         return winner
+

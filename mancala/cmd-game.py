@@ -1,25 +1,37 @@
 from mancala.game import Game, Base
 from mancala.board import Board
+from mancala.game_manager import create_session
 from mancala.exceptions import InvalidInput, EmptyPit
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import uuid
 
 
 def run():
-    engine = create_engine("postgresql://postgres:65266526@localhost/mancala")
-    Base.metadata.create_all(engine)
-    player_1 = input("First player, enter your name: ")
-    player_2 = input("Second player, enter your name: ")
-    game = Game(player_1=player_1, player_2=player_2)
-    game.start_game()
+    session = create_session()
 
-    Session = sessionmaker(engine, expire_on_commit=False)
-    session = Session()
-    session.add(game)
-    session.commit()
+    saved_or_not = input("For saved game, insert 0, for new game, press enter ")
+    if saved_or_not == "0":
+        while True:
+            try:
+                saved_game_id = uuid.UUID(input("saved game id? "))
+                break
+            except ValueError:
+                print("Invalid game id")
+        game = session.query(Game).filter_by(id=saved_game_id).first()
+        player_1 = game.player_1
+        player_2 = game.player_2
+    else:
+        player_1 = input("First player, enter your name: ")
+        player_2 = input("Second player, enter your name: ")
+        game = Game(player_1=player_1, player_2=player_2)
+        game.start_game()
+        session.add(game)
+        session.commit()
+        print("your game id is: " + str(game.id))
+        print(game.turn + ", the first move is yours")
 
     Board.print_board(game.board, player_1, player_2)
-    print(game.turn + ", the first move is yours")
 
     while not Board.all_pits_empty(game.board):
         print(game.turn + ", it\'s your turn")
@@ -28,8 +40,6 @@ def run():
             try:
                 game.make_move(move)
                 Board.print_board(game.board, player_1, player_2)
-                # board = game.board
-                # session.add_all([game, board])
                 session.commit()
                 break
             except EmptyPit:
