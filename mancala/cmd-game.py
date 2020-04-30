@@ -1,10 +1,11 @@
-from mancala.game import Game, Base
-from mancala.board import Board
-from mancala.game_manager import create_session
-from mancala.exceptions import InvalidInput, EmptyPit
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import uuid
+
+from sqlalchemy.orm import sessionmaker
+
+from mancala.board import Board
+from mancala.exceptions import InvalidInput, EmptyPit
+from mancala.game import Game
+from mancala.game_manager import create_session
 
 
 def run():
@@ -33,35 +34,28 @@ def run():
 
     Board.print_board(game.board, player_1, player_2)
 
-    while not Board.all_pits_empty(game.board):
-        print(game.turn + ", it\'s your turn")
-        while True:
-            move = input("pit number to start the move from: ")
-            try:
-                game.make_move(move)
-                Board.print_board(game.board, player_1, player_2)
-                session.commit()
-                break
-            except EmptyPit:
-                print("Choose a non empty pit, genius")
-            except InvalidInput:
-                print("Choose valid pit number, 0-11")
+    try:
+        while not Board.all_pits_empty(game.board):
+            print(game.turn + ", it\'s your turn")
+            while True:
+                move = input("pit number to start the move from: ")
+                try:
+                    game.make_move(move)
+                    Board.print_board(game.board, player_1, player_2)
+                    session.commit()
+                    break
+                except EmptyPit:
+                    print("Choose a non empty pit, genius")
+                except InvalidInput:
+                    print("Choose valid pit number, 0-11")
+    except KeyboardInterrupt:
+        print("\nDon't forget your id mate! it's " + str(game.id))
+        return
 
     winner = str(game.end_game()).upper()
     print(winner + " WON")
 
     return
-
-
-def get_started(engine, game):
-
-    Session = sessionmaker(engine)
-    session = Session()
-
-    session.add(game)
-    session.commit()
-
-    pass
 
 
 if __name__ == "__main__":
