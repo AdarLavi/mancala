@@ -42,17 +42,6 @@ class Game(Base):
         stones_in_pit = self.board.remove_from_pit(pit_to_start)
         current_turn = self.turn
         self.turn = self.player_1 if current_turn != self.player_1 else self.player_2
-
-        # # if player 1
-        # if stones_in_pit + pit_to_start == 5:
-        #     for steps, stone in enumerate(stones_in_pit):
-        #         self.board.add_to_pit(pit_to_start + steps + 1)
-        #     self.board.add_to_store(current_player_store)
-        #
-        # if stones_in_pit + pit_to_start == 11:
-        #     for steps, stone in enumerate(stones_in_pit):
-        #         self.board.add_to_pit(pit_to_start + steps + 1)
-        #     self.board.add_to_store(current_player_store)
         current_pit = pit_to_start
 
         stones = stones_in_pit
