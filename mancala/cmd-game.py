@@ -5,7 +5,7 @@ from sys import exit
 from mancala.board import Board
 from mancala.exceptions import InvalidInput, EmptyPit
 from mancala.game import Game
-from mancala.game_manager import create_session
+from mancala.game_manager import create_session, retrieve_game
 
 
 def run():
@@ -19,7 +19,8 @@ def run():
                 break
             except ValueError:
                 print("Invalid game id")
-        game = session.query(Game).filter_by(id=saved_game_id).first()
+        game = retrieve_game(session, saved_game_id)
+        # game = session.query(Game).filter_by(id=saved_game_id).first()
         player_1 = game.player_1
         player_2 = game.player_2
     else:

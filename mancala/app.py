@@ -1,8 +1,8 @@
-from flask import Flask, request, g, abort, make_response, jsonify
+from flask import Flask, request, g, abort, make_response
 
 from mancala.exceptions import EmptyPit, InvalidInput
 from mancala.game import Game
-from mancala.game_manager import create_session
+from mancala.game_manager import create_session, retrieve_game
 
 app = Flask(__name__)
 
@@ -13,6 +13,7 @@ def get_session():
 
     return g.session
 
+
 # @app.teardown_appcontext
 # def teardown_session():
 #     session = g.pop('session', None)
@@ -21,10 +22,9 @@ def get_session():
 #         session.close()
 
 
-@app.errorhandler
+@app.errorhandler(400)
 def bad_request(error):
-    return make_response(jsonify({'error': 'Not found'}), 400)
-    # return make_response({"error": "Invalid Input"}, 400)
+    return make_response({"error": "Invalid input."}, 400)
 
 
 def jsonify_game(game):
@@ -42,6 +42,8 @@ def new_game():
     data = request.get_json()
     player_1 = data.get('player_1', None)
     player_2 = data.get('player_2', None)
+    if not player_1 or not player_2:
+        abort(400)
     new_game = Game(player_1, player_2)
     new_game.start_game()
     session = get_session()
@@ -54,14 +56,18 @@ def new_game():
 @app.route("/game/<string:game_id>", methods=['GET'])
 def get_game(game_id):
     session = get_session()
-    return jsonify_game(session.query(Game).filter_by(id=game_id).first())
+    return jsonify_game(retrieve_game(session, game_id))
 
 
 @app.route('/game/<string:game_id>/make-move', methods=['POST'])
 def make_move(game_id):
     session = get_session()
-    game = session.query(Game).filter_by(id=game_id).first()
-    pit = request.get_json().get('pit', None)
+    data = request.get_json()
+    game = retrieve_game(session, game_id)
+    user = data.get('user', None)
+    if game.turn.lower() != user.lower():
+        abort(400)
+    pit = data.get('pit', None)
     try:
         game.make_move(pit)
     except EmptyPit:
@@ -69,6 +75,11 @@ def make_move(game_id):
     except InvalidInput:
         abort(400)
     session.commit()
+
+    if game.board.all_pits_empty():
+        winner = game.end_game()
+        return {"The winner is:": winner}
+    
     return jsonify_game(game)
 
 

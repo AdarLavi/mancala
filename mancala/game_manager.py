@@ -1,5 +1,6 @@
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
+from mancala.game import Game
 
 from mancala.base import Base
 
@@ -12,3 +13,7 @@ def create_session():
     Session = sessionmaker(engine, expire_on_commit=False)
     session = Session()
     return session
+
+
+def retrieve_game(session, game_id):
+    return session.query(Game).filter_by(id=game_id).first()
