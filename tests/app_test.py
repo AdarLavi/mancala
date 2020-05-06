@@ -2,10 +2,9 @@ import json
 
 import pytest
 
-from mancala.app import app
+from mancala.app import app, jsonify_game
 from mancala.game import Game
-from mancala.game_manager import create_session
-from mancala.game_manager import retrieve_game
+from mancala.game_manager import create_session, retrieve_game
 
 
 def get_code_and_response(response):
@@ -79,14 +78,58 @@ def test_get_game_doesnt_exist(client):
 
 
 def test_make_move(client, game):
-    data = {"turn": game.turn, "pit": 6}
+    data = {"user": game.turn, "pit": 6}
     response = client.post('/game/{}/make-move'.format(game.id), json=data)
     status_code, response = get_code_and_response(response)
 
     assert status_code == 200
-    assert response['board'] == [4]*6 + [0] + [5]*4 + [4]
-    assert response['pits'] == [0]*2
+    assert response['pits'] == [4]*6 + [0] + [5]*4 + [4]
+    assert response['stores'] == [0]*2
 
 
+def test_make_move_wrong_player(client, game):
+    user = game.player_2 if game.turn == game.player_1 else game.player_1
+    data = {"user": user, "pit": 6}
+    response = client.post('/game/{}/make-move'.format(game.id), json=data)
+    status_code, response = get_code_and_response(response)
+
+    assert status_code == 400
+    assert response == {"error": "not this player turn"}
 
 
+def test_make_move_no_player(client, game):
+    data = {"pit": 6}
+    response = client.post('/game/{}/make-move'.format(game.id), json=data)
+    status_code, response = get_code_and_response(response)
+
+    assert status_code == 400
+    assert response == {"error": "player was not declared"}
+
+
+def test_make_move_no_pit(client, game):
+    data = {"user": game.turn}
+    response = client.post('/game/{}/make-move'.format(game.id), json=data)
+    status_code, response = get_code_and_response(response)
+
+    assert status_code == 400
+    assert response == {"error": "pit was not declared"}
+
+
+def test_make_move_invalid_pit(client, game):
+    data = {"user": game.turn, "pit": 80}
+    response = client.post('/game/{}/make-move'.format(game.id), json=data)
+    status_code, response = get_code_and_response(response)
+
+    assert status_code == 400
+    assert response == {"error": "Invalid input. Not a number of a pit"}
+
+
+def test_jsonify_game(game):
+    j_game = jsonify_game(game)
+
+    assert j_game == {'id': game.id,
+                      'player_1': game.player_1,
+                      'player_2': game.player_2,
+                      'pits': game.board.pits,
+                      'stores': game.board.stores,
+                      'turn': game.turn}

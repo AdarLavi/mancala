@@ -68,15 +68,21 @@ def make_move(game_id):
     data = request.get_json()
     game = retrieve_game(session, game_id)
     user = data.get('user', None)
-    if game.turn.lower() != user.lower():
-        return {"error": "not this player turn"}, 400
+    if user:
+        if game.turn.lower() != user.lower():
+            return {"error": "not this player turn"}, 400
+    else:
+        return {"error": "player was not declared"}, 400
     pit = data.get('pit', None)
-    try:
-        game.make_move(pit)
-    except EmptyPit:
-        return {"error": "Invalid input. Empty pit was chosen."}, 400
-    except InvalidInput:
-        return {"error": "Invalid input. Not a number of a pit"}, 400
+    if pit:
+        try:
+            game.make_move(pit)
+        except EmptyPit:
+            return {"error": "Invalid input. Empty pit was chosen."}, 400
+        except InvalidInput:
+            return {"error": "Invalid input. Not a number of a pit"}, 400
+    else:
+        return {"error": "pit was not declared"}, 400
     session.commit()
 
     if game.board.all_pits_empty():
