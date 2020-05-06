@@ -27,7 +27,6 @@ def run():
         player_1 = input("First player, enter your name: ")
         player_2 = input("Second player, enter your name: ")
         game = Game(player_1=player_1, player_2=player_2)
-        game.start_game()
         session.add(game)
         session.commit()
         print("your game id is: " + str(game.id))

@@ -45,7 +45,6 @@ def new_game():
     if not player_1 or not player_2:
         return {"error": "Invalid input. Two players must have a name"}, 400
     new_game = Game(player_1, player_2)
-    new_game.start_game()
     session = get_session()
     session.add(new_game)
     session.commit()
@@ -56,7 +55,11 @@ def new_game():
 @app.route("/game/<string:game_id>", methods=['GET'])
 def get_game(game_id):
     session = get_session()
-    return jsonify_game(retrieve_game(session, game_id))
+    try:
+        game = jsonify_game(retrieve_game(session, game_id))
+        return game
+    except Exception:
+        return {"error": "game id doesn't exist"}, 500
 
 
 @app.route('/game/<string:game_id>/make-move', methods=['POST'])
