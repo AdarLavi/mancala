@@ -24,7 +24,7 @@ def get_session():
 
 @app.errorhandler(400)
 def bad_request(error):
-    return make_response({"error": "Invalid input."}, 400)
+    return {"error": "Invalid input."}, 400
 
 
 def jsonify_game(game):
@@ -43,7 +43,7 @@ def new_game():
     player_1 = data.get('player_1', None)
     player_2 = data.get('player_2', None)
     if not player_1 or not player_2:
-        abort(400)
+        return {"error": "Invalid input. Two players must have a name"}, 400
     new_game = Game(player_1, player_2)
     new_game.start_game()
     session = get_session()
@@ -66,20 +66,20 @@ def make_move(game_id):
     game = retrieve_game(session, game_id)
     user = data.get('user', None)
     if game.turn.lower() != user.lower():
-        abort(400)
+        return {"error": "not this player turn"}, 400
     pit = data.get('pit', None)
     try:
         game.make_move(pit)
     except EmptyPit:
-        abort(400)
+        return {"error": "Invalid input. Empty pit was chosen."}, 400
     except InvalidInput:
-        abort(400)
+        return {"error": "Invalid input. Not a number of a pit"}, 400
     session.commit()
 
     if game.board.all_pits_empty():
         winner = game.end_game()
         return {"The winner is:": winner}
-    
+
     return jsonify_game(game)
 
 
