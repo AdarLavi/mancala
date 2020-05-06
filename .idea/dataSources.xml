@@ -7,5 +7,11 @@
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:C:\Users\Adar.Lavi\Documents\InterviewsPrep\mancala\.coverage</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="[2]" uuid="3b37b195-7c93-4344-8557-866c99a3505a">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\Adar.Lavi\Documents\InterviewsPrep\mancala\tests\.coverage</jdbc-url>
+    </data-source>
   </component>
 </project>

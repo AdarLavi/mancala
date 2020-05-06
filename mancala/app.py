@@ -59,7 +59,7 @@ def get_game(game_id):
         game = jsonify_game(retrieve_game(session, game_id))
         return game
     except Exception:
-        return {"error": "game id doesn't exist"}, 500
+        return {"error": "game id doesn't exist"}, 404
 
 
 @app.route('/game/<string:game_id>/make-move', methods=['POST'])

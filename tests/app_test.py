@@ -73,7 +73,7 @@ def test_get_game_doesnt_exist(client):
     response = client.get('/game/{}'.format('n0t3v3n1d'))
     status_code, response = get_code_and_response(response)
 
-    assert status_code == 500
+    assert status_code == 404
     assert response == {"error": "game id doesn't exist"}
 
 
