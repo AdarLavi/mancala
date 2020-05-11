@@ -20,7 +20,6 @@ def run():
             except ValueError:
                 print("Invalid game id")
         game = retrieve_game(session, saved_game_id)
-        # game = session.query(Game).filter_by(id=saved_game_id).first()
         player_1 = game.player_1
         player_2 = game.player_2
     else:
@@ -35,6 +34,7 @@ def run():
     def exit_game(sig, frame):
         print("\nDon't forget your id! it's " + str(game.id))
         exit(0)
+
     signal(SIGINT, exit_game)
     Board.print_board(game.board, player_1, player_2)
 
