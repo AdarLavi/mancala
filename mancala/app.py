@@ -74,7 +74,7 @@ def make_move(game_id):
     else:
         return {"error": "player was not declared"}, 400
     pit = data.get('pit', None)
-    if pit:
+    if pit is not None:
         try:
             game.make_move(pit)
         except EmptyPit:

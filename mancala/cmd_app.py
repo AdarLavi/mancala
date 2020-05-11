@@ -1,5 +1,5 @@
 from signal import SIGINT, signal
-
+import time
 import pandas as pd
 import requests
 
@@ -10,6 +10,7 @@ def run():
         game = None
         while not game:
             saved_game_id = input("saved game id? ")
+            name = input("and your name is...? ")
             response = requests.get('http://127.0.0.1:5000/game/{}'.format(saved_game_id))
             if not response.ok:
                 print(response.text)
@@ -19,15 +20,16 @@ def run():
         player_1 = game['player_1']
         player_2 = game['player_2']
     else:
-        while True:
-            player_1 = input("First player, enter your name: ")
-            player_2 = input("Second player, enter your name: ")
-            response = requests.post("http://127.0.0.1:5000/game/new-game",
-                                     json={'player_1': player_1, 'player_2': player_2})
-            if not response.ok:
-                print(response.text)
-                continue
-            break
+        return
+        # while True:
+        #     player_1 = input("First player, enter your name: ")
+        #     player_2 = input("Second player, enter your name: ")
+        #     response = requests.post("http://127.0.0.1:5000/game/new-game",
+        #                              json={'player_1': player_1, 'player_2': player_2})
+        #     if not response.ok:
+        #         print(response.text)
+        #         continue
+        #     break
 
         game = response.json()
         game_id = game['id']
@@ -43,16 +45,19 @@ def run():
     has_winner = False
 
     while not has_winner:
-        print(game['turn'] + ", it\'s your turn")
-        move = input("pit number to start the move from: ")
-        url = "http://127.0.0.1:5000/game/{}/make-move".format(game_id)
-        response = requests.post(url=url,
-                                 json={'user': game['turn'], 'pit': int(move)})
+        if name == game['turn']:
+            print(game['turn'] + ", it\'s your turn")
+            move = input("pit number to start the move from: ")
+            url = "http://127.0.0.1:5000/game/{}/make-move".format(game_id)
+            response = requests.post(url=url,
+                                     json={'user': game['turn'], 'pit': int(move)})
 
-        if not response.ok:
-            print(response.text)
-            continue
-        game = response.json()
+            if not response.ok:
+                print(response.text)
+                continue
+            game = response.json()
+        else:
+            time.sleep(2)
         print_game(player_1, player_2, game)
 
         if 'The winner is:' in response:
