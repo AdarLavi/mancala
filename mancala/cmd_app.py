@@ -20,32 +20,35 @@ def run():
         player_1 = game['player_1']
         player_2 = game['player_2']
     else:
-        return
-        # while True:
-        #     player_1 = input("First player, enter your name: ")
-        #     player_2 = input("Second player, enter your name: ")
-        #     response = requests.post("http://127.0.0.1:5000/game/new-game",
-        #                              json={'player_1': player_1, 'player_2': player_2})
-        #     if not response.ok:
-        #         print(response.text)
-        #         continue
-        #     break
+        while True:
+            player_1 = input("Please enter YOUR name: ")
+            player_2 = input("Please enter your OPPONENT name: ")
+            response = requests.post("http://127.0.0.1:5000/game/new-game",
+                                     json={'player_1': player_1, 'player_2': player_2})
+            if not response.ok:
+                print(response.text)
+                continue
 
+            break
+        name = player_1
         game = response.json()
         game_id = game['id']
         print("your game id is: " + str(game_id))
-        print(game['turn'] + ", the first move is yours")
 
     def exit_game(sig, frame):
         print("\nDon't forget your id! it's " + str(game['id']))
         exit(0)
 
     signal(SIGINT, exit_game)
-    print_game(player_1, player_2, game)
     has_winner = False
+    print_game(player_1, player_2, game)
+    after_switch = False if game['turn'] == name else True
 
     while not has_winner:
         if name == game['turn']:
+            if after_switch:
+                print_game(player_1, player_2, game)
+                after_switch = False
             print(game['turn'] + ", it\'s your turn")
             move = input("pit number to start the move from: ")
             url = "http://127.0.0.1:5000/game/{}/make-move".format(game_id)
@@ -56,12 +59,16 @@ def run():
                 print(response.text)
                 continue
             game = response.json()
+            print_game(player_1, player_2, game)
+            if game['turn'] != name:
+                after_switch = True
         else:
-            time.sleep(2)
-        print_game(player_1, player_2, game)
+            print("waiting for other player to make a move...")
+            time.sleep(3)
+        game = requests.get("http://127.0.0.1:5000/game/{}".format(game_id)).json()
 
-        if 'The winner is:' in response:
-            has_winner = True
+        if game['is_over']:
+            print('The winner is: ' + game['winner'])
     return
 
 

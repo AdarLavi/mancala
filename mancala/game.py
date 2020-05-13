@@ -1,11 +1,13 @@
 import uuid
 from random import randint
 
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from mancala.base import Base
+from mancala.board import Board, pits_pairs
+from mancala.exceptions import InvalidInput, EmptyPit
 
 
 class Game(Base):
@@ -15,6 +17,7 @@ class Game(Base):
     player_1 = Column(String)
     player_2 = Column(String)
     turn = Column(String)
+    is_over = Column(Boolean)
 
     board = relationship("Board", uselist=False, back_populates="game")
 
@@ -23,6 +26,7 @@ class Game(Base):
         self.player_1 = player_1  # pits 0-5, store 1
         self.player_2 = player_2  # pits 6-11, store 2
         self.turn = self.start_game()
+        self.is_over = False
 
     def start_game(self):
         first_turn = randint(1, 3)
@@ -87,11 +91,13 @@ class Game(Base):
             self.board.add_to_store(current_store)
 
     def end_game(self):
-        winner = self.player_1 if self.board.get_store_stones(1) > \
-                                  self.board.get_store_stones(2) else self.player_2
+        player_1_in_store = self.board.get_store_stones(1)
+        player_2_in_store = self.board.get_store_stones(2)
+        if player_1_in_store == player_2_in_store:
+            winner = 'No one, it\'s a tie!'
+        elif player_1_in_store > player_2_in_store:
+            winner = self.player_1
+        else:
+            winner = self.player_2
+        self.is_over = True
         return winner
-from mancala.board import Board, pits_pairs
-
-
-from mancala.exceptions import InvalidInput, EmptyPit
-

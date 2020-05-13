@@ -132,4 +132,5 @@ def test_jsonify_game(game):
                       'player_2': game.player_2,
                       'pits': game.board.pits,
                       'stores': game.board.stores,
-                      'turn': game.turn}
+                      'turn': game.turn,
+                      'is_over': game.is_over}

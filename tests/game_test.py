@@ -89,3 +89,4 @@ def test_winning(game):
     game.turn = "second"
     game.make_move(11)
     assert game.end_game() == "second"
+    assert game.is_over is True

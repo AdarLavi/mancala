@@ -33,7 +33,8 @@ def jsonify_game(game):
                  'player_2': game.player_2,
                  'pits': game.board.pits,
                  'stores': game.board.stores,
-                 'turn': game.turn}
+                 'turn': game.turn,
+                 'is_over': game.is_over}
     return json_game
 
 
@@ -87,7 +88,8 @@ def make_move(game_id):
 
     if game.board.all_pits_empty():
         winner = game.end_game()
-        return {"The winner is:": winner}
+        win_json = dict({'winner': winner}, **jsonify_game(game))
+        return win_json
 
     return jsonify_game(game)
 
