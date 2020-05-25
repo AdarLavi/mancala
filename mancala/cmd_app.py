@@ -1,3 +1,4 @@
+import os
 from signal import SIGINT, signal
 import time
 import pandas as pd
@@ -5,13 +6,14 @@ import requests
 
 
 def run():
+    URL = os.environ['SERVER_URL']
     saved_or_not = input("For saved game, insert 0, for new game, press enter ")
     if saved_or_not == "0":
         game = None
         while not game:
             saved_game_id = input("saved game id? ")
             name = input("and your name is...? ")
-            response = requests.get('http://127.0.0.1:5000/game/{}'.format(saved_game_id))
+            response = requests.get('{}/game/{}'.format(URL, saved_game_id))
             if not response.ok:
                 print(response.text)
                 continue
@@ -23,7 +25,7 @@ def run():
         while True:
             player_1 = input("Please enter YOUR name: ")
             player_2 = input("Please enter your OPPONENT name: ")
-            response = requests.post("http://127.0.0.1:5000/game/new-game",
+            response = requests.post("{}/game/new-game".format(URL),
                                      json={'player_1': player_1, 'player_2': player_2})
             if not response.ok:
                 print(response.text)
@@ -51,7 +53,7 @@ def run():
                 after_switch = False
             print(game['turn'] + ", it\'s your turn")
             move = input("pit number to start the move from: ")
-            url = "http://127.0.0.1:5000/game/{}/make-move".format(game_id)
+            url = "{}/game/{}/make-move".format(URL, game_id)
             response = requests.post(url=url,
                                      json={'user': game['turn'], 'pit': int(move)})
 
@@ -65,7 +67,7 @@ def run():
         else:
             print("waiting for other player to make a move...")
             time.sleep(3)
-        game = requests.get("http://127.0.0.1:5000/game/{}".format(game_id)).json()
+        game = requests.get("{}/game/{}".format(URL, game_id)).json()
 
         if game['is_over']:
             print('The winner is: ' + game['winner'])
