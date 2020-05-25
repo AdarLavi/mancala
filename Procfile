@@ -1,0 +1,1 @@
+web: python cmd_app.py 
