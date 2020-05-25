@@ -1,1 +1,1 @@
-web: python cmd_app.py 
+web: gunicorn mancala.app:app
