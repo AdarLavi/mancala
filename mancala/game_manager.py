@@ -1,10 +1,12 @@
+import os
+
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
-from mancala.game import Game
 
 from mancala.base import Base
+from mancala.game import Game
 
-DB_STRING = "postgresql://postgres:65266526@localhost/mancala"
+DB_STRING = os.environ['DATABASE_URL']
 
 
 def create_session():
