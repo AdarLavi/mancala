@@ -1,4 +1,4 @@
-from flask import Flask, request, g, abort, make_response
+from flask import Flask, request, g
 
 from mancala.exceptions import EmptyPit, InvalidInput
 from mancala.game import Game
@@ -14,12 +14,12 @@ def get_session():
     return g.session
 
 
-# @app.teardown_appcontext
-# def teardown_session():
-#     session = g.pop('session', None)
-#
-#     if session is not None:
-#         session.close()
+@app.teardown_appcontext
+def teardown_session(_):
+    session = g.pop('session', None)
+
+    if session is not None:
+        session.close()
 
 
 @app.errorhandler(400)
