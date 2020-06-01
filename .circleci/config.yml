@@ -4,6 +4,12 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6.6
+        environment:
+          DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
+      - image: circleci/postgres:12.2
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle_test
     steps:
       - checkout
       - run:
@@ -11,6 +17,7 @@ jobs:
             sudo pip install -r requirements.txt
       - run:
           command: |
+            sudo pip install -e .
             pytest
 
 
