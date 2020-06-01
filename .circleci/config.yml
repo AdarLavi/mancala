@@ -9,4 +9,9 @@ jobs:
       - run:
           command: |
             sudo pip install -r requirements.txt
+      - run:
+          command: |
+            cd tests
+            pytest
+
 
