@@ -1,4 +1,5 @@
 import json
+from uuid import uuid4
 
 import pytest
 
@@ -70,7 +71,7 @@ def test_get_game(game, client):
 
 
 def test_get_game_doesnt_exist(client):
-    response = client.get('/game/{}'.format('n0t3v3n1d'))
+    response = client.get('/game/{}'.format(uuid4()))
     status_code, response = get_code_and_response(response)
 
     assert status_code == 404
